@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>DPI Calculator</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script>
+		$( function() {
+			function applyToInputSet( id ) {
+				var dpis = [ 640, 480, 320, 240, 160, 120, 212.8 ];
+				var labels = [ 'xxxhdpi', 'xxhdpi', 'xhdpi', 'hdpi', 'mdpi', 'ldpi', 'tvdpi' ];
+				var inputs = $(id+' input');
+				inputs.each( function(i) {
+					if( this.value == '' ) {
+						this.value = '';
+					}
+					set(this, this.value, dpis[i]);
+				});
+				
+				function convert( source_value, source_dpi, target_dpi ) {
+					// console.log( source_value, source_dpi, target_dpi );
+					if( isNaN(source_value) )
+						return '';
+					
+					return source_value * ( target_dpi / source_dpi ); 
+				}
+				
+				function check( value, dpi ) {
+					if (dpi == 212.8) {
+						// console.log(Math.round(value / 1.33), convert(value, 212.8, 160));
+						return Math.round(value / 1.33) == convert(value, 212.8, 160);
+					}
+					var l = dpi/40;
+					if( (value % l) != 0 ) {
+						// console.log(value, "not valid for", dpi, value / 1.33);
+						return false;
+					}
+					return true;
+				}
+				
+				function closest( value, dpi ) {
+					var l = dpi/40;
+					
+					return Math.round(value / l) * l;
+				}
+				
+				function set( input, value, dpi ) {
+					input.value = value;
+					$(input).data('last_value', value);
+					// Find source input's label
+					var source_hint = $(input).parent().find('.hint')[0];
+					var source_hint_text = closest( value, dpi );
+					if( source_hint_text != value && !isNaN(source_hint_text) ) {
+						source_hint.innerHTML = source_hint_text;
+					} else {
+						source_hint.innerHTML = '';
+					}
+				}
+				
+				function onUpdate( dpi_index ) {
+					
+					var source_dpi = dpis[dpi_index];
+					var source_input = inputs[dpi_index];
+					
+					if( $(source_input).data('last_value') == source_input.value ) {
+						return;
+					}
+					set(source_input, source_input.value, source_dpi);
+					
+					var source_value = parseFloat(source_input.value);
+					
+					var source_hint_text = '';
+					inputs.removeClass('error');
+					if( source_input.value != '' && check( source_value, source_dpi ) === false ) {
+						$(inputs[dpi_index]).addClass('error');
+					}
+					 
+					
+					var results = [ 0, 0, 0, 0, 0 ];
+					inputs.each( function(i) {
+						if( i != dpi_index ) {
+							set(inputs[i], convert( source_value, source_dpi, dpis[i] ), dpis[i]);
+						}
+					});
+				}
+				
+				inputs.each( function(i) {
+					$(document.body).bind('keydown', function(e) {
+						// console.log( e );
+					});
+					$(this).bind('keyup', function() { onUpdate(i); });
+					$(this).bind('change', function() { onUpdate(i); });
+				});
+			}
+			
+			applyToInputSet( '#cal1' );
+			applyToInputSet( '#cal2' );
+			applyToInputSet( '#cal3' );
+		});
+	</script>
+</head>
+<body>
+	
+	<div class="wrapper">
+		<div class="wrapper-inner">
+			
+			<h1>DPI Calculator for Android</h1>		
+						
+			<form id="cal1">
+				<div class="box">
+					<input type="text" id="xxxhdpi" autofocus="" tabindex="1">
+					<div class="labels">
+						<label for="xxxhdpi">xxxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xxhdpi" tabindex="4">
+					<div class="labels">
+						<label for="xxhdpi">xxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xhdpi" tabindex="7">
+					<div class="labels">
+						<label for="xhdpi">xhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="hdpi" tabindex="10">
+					<div class="labels">
+						<label for="hdpi">hdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="mdpi" tabindex="13">
+					<div class="labels">
+						<label for="mdpi">mdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="ldpi" tabindex="16">
+					<div class="labels">
+						<label for="ldpi">ldpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="tvdpi" tabindex="19">
+					<div class="labels">
+						<label for="tvdpi">tvdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+			</form>
+			
+			<form id="cal2">
+				<div class="box">
+					<input type="text" id="xxxhdpi" tabindex="2">
+					<div class="labels">
+						<label for="xxxhdpi">xxxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xxhdpi" tabindex="5">
+					<div class="labels">
+						<label for="xxhdpi">xxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xhdpi" tabindex="8">
+					<div class="labels">
+						<label for="xhdpi">xhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="hdpi" tabindex="11">
+					<div class="labels">
+						<label for="hdpi">hdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="mdpi" tabindex="14">
+					<div class="labels">
+						<label for="mdpi">mdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="ldpi" tabindex="17">
+					<div class="labels">
+						<label for="ldpi">ldpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="tvdpi" tabindex="20">
+					<div class="labels">
+						<label for="tvdpi">tvdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+			</form>
+
+			<form id="cal3">
+				<div class="box">
+					<input type="text" id="xxxhdpi" tabindex="3">
+					<div class="labels">
+						<label for="xxxhdpi">xxxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xxhdpi" tabindex="6">
+					<div class="labels">
+						<label for="xxhdpi">xxhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="xhdpi" tabindex="9">
+					<div class="labels">
+						<label for="xhdpi">xhdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="hdpi" tabindex="12">
+					<div class="labels">
+						<label for="hdpi">hdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="mdpi" tabindex="15">
+					<div class="labels">
+						<label for="mdpi">mdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="ldpi" tabindex="18">
+					<div class="labels">
+						<label for="ldpi">ldpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+				<div class="box">
+					<input type="text" id="tvdpi" tabindex="21">
+					<div class="labels">
+						<label for="tvdpi">tvdpi</label>
+						<span class="hint"></span>
+					</div>
+				</div>
+			</form>	
+
+			<hr />
+			<h5>With thanks to <a href="https://twitter.com/martin_cohen" target="_blank">martincohen</a> | <a href="http://coh.io/adpi/" target="_blank">http://coh.io/adpi/</a></h5>				
+				
+		</div>
+	</div>
+
+</body>
+</html>
