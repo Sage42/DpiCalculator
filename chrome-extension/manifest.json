@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+
+  "name": "DPI Calculator",
+  "description": "DPI calculator for Android developers and designers by Jennift @ Sage42.com",
+  "version": "1.0",
+
+  "permissions": [
+  ],
+  "browser_action": {
+    "default_icon": "launcher.png",
+    "default_popup": "popup.html"
+  }
+}
