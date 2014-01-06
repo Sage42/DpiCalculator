@@ -14,9 +14,10 @@ a, a:visited, a:hover, a:active {
 
 h6 {
 	font-weight:normal;
-	padding:10px;
+	padding:10px 0 5px;
 	margin:0;
 	border-top:1px dotted #ccc;
+	text-align: center;
 }
 
 form {
@@ -27,7 +28,7 @@ form {
 	width:100px;
 	display:block;
 	margin:0;
-	padding:10px;
+	padding:8px 10px;
 }
 
 
@@ -60,4 +61,8 @@ form {
 
 .box .hint {
 	float: right;
+}
+
+a.light, a.light:visited, a.light:hover, a.light:active {
+	color:#666;
 }
