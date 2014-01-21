@@ -51,7 +51,7 @@ $( function() {
         }
         
         function onUpdate( dpi_index ) {
-            
+            console.log("onUpdate: " + dpi_index);
             var source_dpi = dpis[dpi_index];
             var source_input = inputs[dpi_index];
             
@@ -67,7 +67,6 @@ $( function() {
             if( source_input.value != '' && check( source_value, source_dpi ) === false ) {
                 $(inputs[dpi_index]).addClass('error');
             }
-             
             
             var results = [ 0, 0, 0, 0, 0 ];
             inputs.each( function(i) {
@@ -75,6 +74,11 @@ $( function() {
                     set(inputs[i], convert( source_value, source_dpi, dpis[i] ), dpis[i]);
                 }
             });
+            
+            // Save it using the Chrome extension storage API.
+            //chrome.storage.local.set({'dpi_index': dpi_index});
+            localStorage["dpi_index"] = dpi_index;
+            localStorage["source_value"] = source_value;
         }
         
         inputs.each( function(i) {
@@ -84,9 +88,24 @@ $( function() {
             $(this).bind('keyup', function() { onUpdate(i); });
             $(this).bind('change', function() { onUpdate(i); });
         });
+
+        // repopulate from chrome storage
+        $(document).ready(function() {
+            // recall data from local storage
+            var dpi_index = localStorage["dpi_index"];
+            if (dpi_index == null) {
+                return;
+            }
+            var source_dpi = dpis[dpi_index];
+            var source_input = inputs[dpi_index];
+            
+            // set the values
+            source_input.value = localStorage["source_value"];
+                        
+            // trigger update of the rest
+            onUpdate(dpi_index);
+        }); 
     }
-    
+    // apply the event handling    
     applyToInputSet( '#cal1' );
-    applyToInputSet( '#cal2' );
-    applyToInputSet( '#cal3' );
 });
